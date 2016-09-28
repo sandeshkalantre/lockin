@@ -34,16 +34,31 @@ void loop(){
     else {
       waveform = (int*) malloc(SIZE * sizeof(int));
     }
+    if (outform!= 0) {
+      outform = (int*) realloc(outform, (SIZE) * sizeof(int));
+    } 
+    else {
+      outform = (int*) malloc((SIZE) * sizeof(int));
+    }
     reading = 1;
     changed = 0;
     index = 0;
   }
   if(reading){
     waveform[index++] = analogRead(inputPin);
+    waveform[index-1] = sin((PI2/SIZE)*(index))*waveform[index-1];
+    if(index==1){
+    outform[index-1] = (1-xdec)*waveform[index-1] + xdec*outform[SIZE-1];
+    }
+    else{
+          outform[index-1] = (1-xdec)*waveform[index-1] + xdec*outform[index-2];
+    }
+    Serial.println((waveform[index-1]+512));
+    delay(50);
     if(index==SIZE){
       index = 0;
-      reading = 0;
-      finished = 1;
+      //reading = 0;
+      //finished = 1;
     }
   }
   if(finished){
@@ -61,12 +76,12 @@ void loop(){
       outform[i] = (1-xdec)*waveform[i] + xdec*outform[i-1];
     }
     
-    Serial.println("The output: ");
+    //Serial.println("The output: ");
     for(int i = 0;i<SIZE;i++){
-      Serial.print(outform[i]);
-      Serial.print(" ");
+      //Serial.println(outform[i]);
+      //Serial.print(" ");
     }
-    Serial.println();
+    //Serial.println();
     finished = 0;
   }
 }
